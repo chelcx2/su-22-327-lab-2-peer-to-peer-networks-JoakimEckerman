@@ -6,8 +6,10 @@
 The goal of this assignment is to become familiar with peer to peer (P2P) networks and having a client act as both client and server using the same codebase. You may work on this
  project in pairs if you choose.
 
+
 Design a program which allows two or more computers to synchronize files across a local area network (LAN). In order to complete the assignment, I am requiring the use of 
 [Docker](https://www.docker.com) to implement your distributed network which will simulate the networking environment and manage the seperate nodes in this network.
+
 
 Each Docker contianer will be a seperate instance of your running code. All nodes *must* be identical in code with the exception of the configuration locations, directory 
 attachments, etc. Essentially, only their Docker config files may differ.
