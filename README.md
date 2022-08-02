@@ -38,6 +38,7 @@ lesson and want a bit "more", I encoruage you to find a few Docker repositories 
 (https://www.linuxserver.io).
 * If you're feeling okay with Docker and still don't know where to start, try making a Docker container with a defined port/socket and a simple program to handle that socket
  [using something like this](https://realpython.com/python-sockets).
+
 * You might need a distributed hash table (DHT) 
 implementation in order to complete this assignment, although, if you are clever, there is a way to do this assignment without one. :)
 
