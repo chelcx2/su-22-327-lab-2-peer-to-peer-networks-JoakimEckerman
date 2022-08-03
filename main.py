@@ -1,16 +1,31 @@
 
-import datetime, sys, socket
+import datetime, sys
+from socket import *
 
+print ("starting...")
 localHost = "127.0.0.1" 
 port = 65432  # Port to listen on (non-privileged ports are > 1023)
 
-''' creating socket object and then setting up a listening socket for the SERVER side'''
+IP = gethostbyname(localHost)
+print ('Starting scan on host: ', IP)
+
+for i in range(65400, 65450):
+    s = socket(AF_INET, SOCK_STREAM)
+    
+    conn = s.connect_ex((IP, i))
+    if(conn == 0) :
+        print ('Port %d: OPEN' % (i,))
+    s.close()
+
+
+'''
+# creating socket object and then setting up a listening socket for the SERVER side
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    '''associates socket w a specific network interface and port num'''
+    #associates socket w a specific network interface and port num
     s.bind((localHost, port))
-    '''listening for connections from CLIENTS'''
+    #listening for connections from CLIENTS
     s.listen()
-    ''' here it accepts the connection and will give us a NEW socket obj >> this the socket well use to communicate w the CLIENT'''
+    #here it accepts the connection and will give us a NEW socket obj >> this the socket well use to communicate w the CLIENT
     conn, addr = s.accept()
 
     # Defining a target
@@ -51,13 +66,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(f"Connected by {addr}")
         # add to a list before sending files
         while True:
-            '''infinite loop to loop over blocking calls and send sent CLIENT data using .sendall()'''
+            #infinite loop to loop over blocking calls and send sent CLIENT data using .sendall()
             data = conn.recv(65432) 
             if not data:
                 break
             conn.sendall(data)
 
-
+'''
 """
 context = zmq.Context()
 me = str(sys.argv[1])
