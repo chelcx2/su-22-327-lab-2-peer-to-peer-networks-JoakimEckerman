@@ -13,16 +13,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     ''' here it accepts the connection and will give us a NEW socket obj >> this the socket well use to communicate w the CLIENT'''
     conn, addr = s.accept()
 
-    with conn:
-        print(f"Connected by {addr}")
-        # add to a list before sending files
-        while True:
-            '''infinite loop to loop over blocking calls and send sent CLIENT data using .sendall()'''
-            data = conn.recv(65432) 
-            if not data:
-                break
-            conn.sendall(data)
-
 # Defining a target
 if len(sys.argv) == 2:
      
@@ -58,6 +48,16 @@ except socket.gaierror:
 except socket.error:
         print("\ Server not responding !!!!")
         sys.exit()
+
+with conn:
+    print(f"Connected by {addr}")
+    # add to a list before sending files
+    while True:
+        '''infinite loop to loop over blocking calls and send sent CLIENT data using .sendall()'''
+        data = conn.recv(65432) 
+        if not data:
+            break
+        conn.sendall(data)
 
 
 """
