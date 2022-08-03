@@ -5,28 +5,23 @@ localHost = "127.0.0.1"
 port = 65432  # Port to listen on (non-privileged ports are > 1023)
 
 ''' creating socket object and then setting up a listening socket for the SERVER side'''
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as socket1:
-    '''client.socket()'''
-    '''specifying socket type Note: this protocol default is TCP'''
-    socket.SOCK_STREAM
-    socket.AF_INET()
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     '''associates socket w a specific network interface and port num'''
-    socket.bind((localHost, port))
+    s.bind((localHost, port))
     '''listening for connections from CLIENTS'''
-    socket.listen()
+    s.listen()
     ''' here it accepts the connection and will give us a NEW socket obj >> this the socket well use to communicate w the CLIENT'''
-    conn, addr = socket.accept()
+    conn, addr = s.accept()
 
     with conn:
         print(f"Connected by {addr}")
+        # add to a list before sending files
         while True:
-            '''infinite loopto loop over blocking calls and send sent CLIENT data using .sendall()'''
+            '''infinite loop to loop over blocking calls and send sent CLIENT data using .sendall()'''
             data = conn.recv(65432) 
             if not data:
                 break
             conn.sendall(data)
-
-# This is where IP search goes
 
 # Defining a target
 if len(sys.argv) == 2:
@@ -37,10 +32,10 @@ else:
     print("Invalid amount of Argument")
  
 # Add Banner
-print("-" * 50)
+print("=" * 50)
 print("Scanning Target: " + target)
 print("Scanning started at:" + str(datetime.now()))
-print("-" * 50)
+print("=" * 50)
   
 try:
     # will scan ports between 65400 to 65450
