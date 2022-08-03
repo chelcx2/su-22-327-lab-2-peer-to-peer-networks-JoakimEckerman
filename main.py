@@ -1,7 +1,11 @@
 
+<<<<<<< HEAD
 import datetime, sys, socket #, pickle
 
 
+=======
+import socket
+>>>>>>> a9e2f3648b2d54dd6bad9085606512add66562b8
 
 localHost = "127.0.0.1" 
 port = 65432  # Port to listen on (non-privileged ports are > 1023)
@@ -64,6 +68,7 @@ except socket.error:
         print("\ Server not responding !!!!")
         sys.exit()
 
+<<<<<<< HEAD
 
 """
 context = zmq.Context()
@@ -85,3 +90,5 @@ while True: # do stuff
     #work = pickle.loads(r.recv()) # receive work from a source
     #time.sleep(work[1]*0.01) # pretend to work
 """
+=======
+>>>>>>> a9e2f3648b2d54dd6bad9085606512add66562b8
