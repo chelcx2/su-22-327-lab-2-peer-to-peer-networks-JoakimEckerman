@@ -3,7 +3,7 @@ services:
       build: .
       command: python ./main.py
       expose:
-         - 65434
+         - 65432
       volumes:
          - ./node1:/files
 
@@ -11,7 +11,7 @@ services:
       build: .
       command: python ./main.py
       expose:
-         - 65434
+         - 65432
       volumes:
          - ./node2:/files
 
@@ -19,7 +19,7 @@ services:
       build: .
       command: python ./main.py
       expose:
-         - 65434
+         - 65432
       volumes:
          - ./node3:/files
 
@@ -27,7 +27,7 @@ services:
       build: .
       command: python ./main.py
       expose:
-         - 65434
+         - 65432
       volumes:
          - ./node4:/files
 
