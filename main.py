@@ -1,5 +1,5 @@
 
-import datetime, sys, socket #, pickle
+import datetime, sys, socket
 
 localHost = "127.0.0.1" 
 port = 65432  # Port to listen on (non-privileged ports are > 1023)
@@ -13,51 +13,49 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     ''' here it accepts the connection and will give us a NEW socket obj >> this the socket well use to communicate w the CLIENT'''
     conn, addr = s.accept()
 
-# Defining a target
-if len(sys.argv) == 2:
-     
-    # translate hostname to IPv4
-    target = socket.gethostbyname(sys.argv[1])
-else:
-    print("Invalid amount of Argument")
- 
-# Add Banner
-print("=" * 50)
-print("Scanning Target: " + target)
-print("Scanning started at:" + str(datetime.now()))
-print("=" * 50)
-  
-try:
-    # will scan ports between 65400 to 65450
-    for port in range(65400,65450):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket.setdefaulttimeout(1)
-         
-        # returns an error indicator
-        result = s.connect_ex((target,port))
-        if result ==0:
-            print("Port {} is open".format(port))
-        s.close()
+    # Defining a target
+    if len(sys.argv) == 2:
+        # translate hostname to IPv4
+        target = s.gethostbyname(sys.argv[1])
+    else:
+        print("Invalid amount of Argument")
+    
+    # Add Banner
+    print("=" * 50)
+    print("Scanning Target: " + target)
+    print("Scanning started at:" + str(datetime.now()))
+    print("=" * 50)
+    
+    try:
+        # will scan ports between 65400 to 65450
+        for port in range(65400,65450):
+            s.setdefaulttimeout(1)
+            
+            # returns an error indicator
+            result = s.connect_ex((target,port))
+            if result ==0:
+                print("Port {} is open".format(port)) # open socket list goes here?
+            s.close()
 
-except KeyboardInterrupt:
-        print("\n Exiting Program !!!!")
-        sys.exit()
-except socket.gaierror:
-        print("\n Hostname Could Not Be Resolved !!!!")
-        sys.exit()
-except socket.error:
-        print("\ Server not responding !!!!")
-        sys.exit()
+    except KeyboardInterrupt:
+            print("\n Exiting Program !!!!")
+            sys.exit()
+    except socket.gaierror:
+            print("\n Hostname Could Not Be Resolved !!!!")
+            sys.exit()
+    except socket.error:
+            print("\ Server not responding !!!!")
+            sys.exit()
 
-with conn:
-    print(f"Connected by {addr}")
-    # add to a list before sending files
-    while True:
-        '''infinite loop to loop over blocking calls and send sent CLIENT data using .sendall()'''
-        data = conn.recv(65432) 
-        if not data:
-            break
-        conn.sendall(data)
+    with conn:
+        print(f"Connected by {addr}")
+        # add to a list before sending files
+        while True:
+            '''infinite loop to loop over blocking calls and send sent CLIENT data using .sendall()'''
+            data = conn.recv(65432) 
+            if not data:
+                break
+            conn.sendall(data)
 
 
 """
