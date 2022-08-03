@@ -26,6 +26,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as socket1:
                 break
             conn.sendall(data)
 
+# This is where IP search goes
+
 # Defining a target
 if len(sys.argv) == 2:
      
