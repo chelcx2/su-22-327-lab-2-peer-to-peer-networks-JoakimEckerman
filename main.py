@@ -21,7 +21,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as socket1:
         print(f"Connected by {addr}")
         while True:
             '''infinite loopto loop over blocking calls and send sent CLIENT data using .sendall()'''
-            data = conn.recv(1024) 
+            data = conn.recv(65432) 
             if not data:
                 break
             conn.sendall(data)
