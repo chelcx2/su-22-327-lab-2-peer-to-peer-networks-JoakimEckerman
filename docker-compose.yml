@@ -2,24 +2,27 @@ services:
    node 1:
       build: .
       command: python ./main.py
-      expose:
-         - 65432
+      ports:
+         - 65400:65432
+         - 65401:65432
       volumes:
          - ./node1:/files
 
    node 2:
       build: .
       command: python ./main.py
-      expose:
-         - 65432
+      ports:
+         - 65402:65432
+         - 65403:65432
       volumes:
          - ./node2:/files
 
    node 3:
       build: .
       command: python ./main.py
-      expose:
-         - 65432
+      ports:
+         - 65404:65432
+         - 65405:65432
       volumes:
          - ./node3:/files
 
@@ -27,7 +30,9 @@ services:
       build: .
       command: python ./main.py
       expose:
-         - 65432
+         ports:
+         - 65406:65432
+         - 65407:65432
       volumes:
          - ./node4:/files
 
