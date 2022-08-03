@@ -6,16 +6,27 @@ print ("starting...")
 localHost = "127.0.0.1" 
 port = 65432  # Port to listen on (non-privileged ports are > 1023)
 
-IP = gethostbyname(localHost)
-print ('Starting scan on host: ', IP)
-
-for i in range(65400, 65450):
+try:
     s = socket(AF_INET, SOCK_STREAM)
-    
-    conn = s.connect_ex((IP, i))
-    if(conn == 0) :
-        print ('Port %d: OPEN' % (i,))
+    print ("Socket successfully created")
+except error as err:
+    print ("socket creation failed with error %s" %(err))
+ 
+try:
+    host_ip = gethostbyname(gethostname())
+    print("Host ip: {}".format(host_ip))
+except gaierror:
+    # this means could not resolve the host
+    print ("there was an error resolving the host")
+    sys.exit()
+ 
+# connecting to the server
+for port in range(65400,65450):
+    result = s.connect_ex((host_ip,port))
+    if result ==0:
+        print("Port {} is open".format(port))
     s.close()
+
 
 
 '''
