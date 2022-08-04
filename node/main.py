@@ -1,12 +1,20 @@
 
-import sys
+import sys, sh
 from socket import *
 
 print ("starting...")
- 
+
+for num in range(0,10):
+    ip = "172.25.0."+str(num)  
+  
+    try:  
+        sh.ping(ip, "-c 1",_out="/dev/null")  
+        print("PING ",ip , "OK" ) 
+    except sh.ErrorReturnCode_1:  
+        print("PING ", ip, "FAILED" )
 try:
     #resolving ip address
-    hostIP = gethostbyname(gethostname()) 
+    hostIP = gethostbyname(gethostname())
     print("Host ip: {}".format(hostIP))
 except gaierror:
     # this means could not resolve the host
