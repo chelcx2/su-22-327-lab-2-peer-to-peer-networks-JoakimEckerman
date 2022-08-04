@@ -14,16 +14,16 @@ except gaierror:
  
 # connecting to the server
 print ("Looking for open ports...")
-try:
+#try:
     # will scan ports between 65400 to 65450
-    for port in range(65400,65450):
-        s = socket(AF_INET, SOCK_STREAM)
-        setdefaulttimeout(1)
-        result = s.connect_ex((host_ip,port))
-        if result == 0:
-            print("Port {} is open".format(port))
-        s.close()
-
+for port in range(65400,65450):
+    s = socket(AF_INET, SOCK_STREAM)
+    setdefaulttimeout(1)
+    result = s.connect_ex((host_ip,port))
+    if result == 0:
+        print("Port {} is open".format(port))
+    s.close()
+'''
 except KeyboardInterrupt:
         print("\n Exiting Program !!!!")
         sys.exit()
@@ -33,6 +33,7 @@ except socket.gaierror:
 except socket.error:
         print("\ Server not responding !!!!")
         sys.exit()
+'''
 
 print ("exiting...")
 
