@@ -13,38 +13,17 @@ except gaierror:
     print ("there was an error resolving the host")
     sys.exit()
 
-# connecting to the server
 print ("Looking for open ports...")
-for port in range(65535):      #check for all available ports
-  
-    try:
-        #print('trying')
-        serv = socket(AF_INET, SOCK_STREAM) # create a new socket
-  
-        serv.bind((hostIP, port)) # bind socket with address
-             
-    except:
-  
-        print('[OPEN] Port open :',port) #print open port number
-  
-    #print('closing')
-    serv.close() #close connection
-'''
 try:
     # will scan ports between 65400 to 65450
     for port in range(65400, 65450):
         s = socket(AF_INET, SOCK_STREAM)
-        print("resolving s as ".format(s))
         setdefaulttimeout(1)
 
         result = s.connect_ex((hostIP,port))
         if result == 0:
             print("Port {} is open".format(port))
         s.close()
-         #connecting to server
-        #s.connect((host_ip,port))
-        #print("Port {} is open".format(port))
-        #s.close()
 
 except KeyboardInterrupt:
         print("\n Exiting Program !!!!")
@@ -55,6 +34,22 @@ except gaierror:
 except error:
         print("\ Server not responding !!!!")
         sys.exit()
+'''
+print ("Looking for open ports...")
+for port in range(65400, 65450):      #check for all available ports
+  
+    try:
+        serv = socket(AF_INET, SOCK_STREAM) # create a new socket
+  
+        print('Trying port :',port) #print open port number
+        serv.bind((hostIP, port)) # bind socket with address
+             
+    except:
+  
+        print('[OPEN] Port open :',port) #print open port number
+  
+    #print('closing')
+    serv.close() #close connection
 '''
 
 
