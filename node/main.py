@@ -1,27 +1,41 @@
 
 import sys
 from socket import *
+from tkinter import S
+
+
+host_ip = 12345;
+port = 2345;
 
 print ("starting...")
  
 try:
-    host_ip = gethostbyname(gethostname())
+    #resolving ip address
+    host_ip = gethostbyname(gethostname()) 
     print("Host ip: {}".format(host_ip))
 except gaierror:
     # this means could not resolve the host
     print ("there was an error resolving the host")
     sys.exit()
- 
+
 # connecting to the server
 print ("Looking for open ports...")
 try:
     # will scan ports between 65400 to 65450
-    for port in range(65400,65450):
-        s = socket(AF_INET, SOCK_STREAM)
-        setdefaulttimeout(1)
+    for port in range(1,66450):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("resolving s as".format(s))
+        socket.setdefaulttimeout(1)
+
+        result = s.connect((host_ip,port))
+        if result == 0:
+            print("Port {} is open".format(port))
+        s.close()
+        ''' #connecting to server
         s.connect((host_ip,port))
         print("Port {} is open".format(port))
         s.close()
+        '''
 
 except KeyboardInterrupt:
         print("\n Exiting Program !!!!")
@@ -33,7 +47,9 @@ except socket.error:
         print("\ Server not responding !!!!")
         sys.exit()
 
+
 print ("exiting...")
+
 
 
 '''
