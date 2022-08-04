@@ -1,9 +1,9 @@
 
-import datetime, sys
+import sys
 from socket import *
 
 print ("starting...")
-localHost = "127.0.0.1" 
+#localHost = "127.0.0.1" 
 port = 65432  # Port to listen on (non-privileged ports are > 1023)
 
 try:
@@ -21,12 +21,14 @@ except gaierror:
     sys.exit()
  
 # connecting to the server
+print ("Looking for open ports...")
 for port in range(65400,65450):
-    result = s.connect_ex((host_ip,port))
-    if result ==0:
+    result = s.connect((host_ip,port))
+    if result == 0:
         print("Port {} is open".format(port))
     s.close()
 
+print ("exiting...")
 
 
 '''
