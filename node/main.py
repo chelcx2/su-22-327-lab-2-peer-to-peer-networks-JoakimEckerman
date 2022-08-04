@@ -3,14 +3,6 @@ import sys
 from socket import *
 
 print ("starting...")
-#localHost = "127.0.0.1" 
-port = 65432  # Port to listen on (non-privileged ports are > 1023)
-
-try:
-    s = socket(AF_INET, SOCK_STREAM)
-    print ("Socket successfully created")
-except error as err:
-    print ("socket creation failed with error %s" %(err))
  
 try:
     host_ip = gethostbyname(gethostname())
@@ -22,11 +14,25 @@ except gaierror:
  
 # connecting to the server
 print ("Looking for open ports...")
-for port in range(65400,65450):
-    result = s.connect((host_ip,port))
-    if result == 0:
-        print("Port {} is open".format(port))
-    s.close()
+try:
+    # will scan ports between 65400 to 65450
+    for port in range(65400,65450):
+        s = socket(AF_INET, SOCK_STREAM)
+        setdefaulttimeout(1)
+        result = s.connect_ex((host_ip,port))
+        if result == 0:
+            print("Port {} is open".format(port))
+        s.close()
+
+except KeyboardInterrupt:
+        print("\n Exiting Program !!!!")
+        sys.exit()
+except socket.gaierror:
+        print("\n Hostname Could Not Be Resolved !!!!")
+        sys.exit()
+except socket.error:
+        print("\ Server not responding !!!!")
+        sys.exit()
 
 print ("exiting...")
 
