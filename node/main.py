@@ -1,5 +1,6 @@
 
-import sys, sh
+import sys
+import sh
 from socket import *
 
 print ("starting...")
