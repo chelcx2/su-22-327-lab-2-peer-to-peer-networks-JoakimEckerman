@@ -22,12 +22,12 @@ except gaierror:
 print ("Looking for open ports...")
 try:
     # will scan ports between 65400 to 65450
-    for port in range(1,66450):
+    for port in range(65400, 65450):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("resolving s as".format(s))
+        print("resolving s as ".format(s))
         socket.setdefaulttimeout(1)
 
-        result = s.connect((host_ip,port))
+        result = s.connect((gethostbyname(gethostname()),port))
         if result == 0:
             print("Port {} is open".format(port))
         s.close()
