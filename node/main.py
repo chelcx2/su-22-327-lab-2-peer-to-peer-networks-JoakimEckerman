@@ -30,7 +30,7 @@ for num in range(2,6):
 try:
     found = False
     for ip in listIP:
-        # will scan ports between 65400 to 65450
+        # will scan all ports
         print("looking for open ports in {}".format(ip))
         for port in range(1,65535):
             s = socket(AF_INET, SOCK_STREAM)
