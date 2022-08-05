@@ -4,26 +4,26 @@ services:
       build: ./node
       command: python3 ./main.py
       ports:
-         - 65400:65432
-         - 65500:65432
+         - 8080:1234
+         - 9090:1234
 
    node2:
       build: ./node
       command: python3 ./main.py
       ports:
-         - 65401:65432
-         - 65501:65432
+         - 8081:1234
+         - 9091:1234
 
    node3:
       build: ./node
       command: python3 ./main.py
       ports:
-         - 65402:65432
-         - 65502:65432
+         - 8082:1234
+         - 9092:1234
 
    node4:
       build: ./node
       command: python3 ./main.py
       ports:
-         - 65403:65432
-         - 65503:65432
+         - 8083:1234
+         - 9093:1234

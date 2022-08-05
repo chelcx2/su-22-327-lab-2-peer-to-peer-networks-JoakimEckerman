@@ -5,6 +5,8 @@ from ping3 import ping
 
 print ("starting...")
 
+s = socket(AF_INET, SOCK_STREAM)
+s.bind(("", 1234))
 try:
     #resolving ip address
     hostIP = gethostbyname(gethostname())
