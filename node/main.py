@@ -1,18 +1,16 @@
 
 import sys
-import sh
 from socket import *
+from ping3 import ping
 
 print ("starting...")
 
 for num in range(0,10):
     ip = "172.25.0."+str(num)  
-  
-    try:  
-        sh.ping(ip, "-c 1",_out="/dev/null")  
-        print("PING ",ip , "OK" ) 
-    except sh.ErrorReturnCode_1:  
-        print("PING ", ip, "FAILED" )
+
+    if ping(ip):
+        print("PING ",ip , "OK" )
+        
 try:
     #resolving ip address
     hostIP = gethostbyname(gethostname())

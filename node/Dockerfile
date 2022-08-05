@@ -1,6 +1,6 @@
 FROM python:latest
 
-RUN pip install sh
+RUN pip install ping3
 
 ADD main.py .
 
