@@ -7,6 +7,7 @@ print ("starting...")
 
 s = socket(AF_INET, SOCK_STREAM)
 s.bind(("", 1234))
+s.listen()
 try:
     #resolving ip address
     hostIP = gethostbyname(gethostname())
@@ -45,13 +46,13 @@ try:
         print("no open ports found")
 
 except KeyboardInterrupt:
-        print("\n Exiting Program !!!!")
-        sys.exit()
+    print("\n Exiting Program !!!!")
+    sys.exit()
 except gaierror:
-        print("\n Hostname Could Not Be Resolved !!!!")
-        sys.exit()
+    print("\n Hostname Could Not Be Resolved !!!!")
+    sys.exit()
 except error:
-        print("\ Server not responding !!!!")
-        sys.exit()
+    print("\ Server not responding !!!!")
+    sys.exit()
 
 print ("exiting...")
