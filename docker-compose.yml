@@ -5,25 +5,21 @@ services:
       command: python3 ./main.py
       ports:
          - 8080:1234
-         - 9090:1234
 
    node2:
       build: ./node
       command: python3 ./main.py
       ports:
          - 8081:1234
-         - 9091:1234
 
    node3:
       build: ./node
       command: python3 ./main.py
       ports:
          - 8082:1234
-         - 9092:1234
 
    node4:
       build: ./node
       command: python3 ./main.py
       ports:
          - 8083:1234
-         - 9093:1234

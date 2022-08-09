@@ -1,11 +1,8 @@
 
-import sys, tqdm, os
-from tkinter import SEPARATOR #automatically imported when using SEPARATOR
+import sys, os
 from socket import *
 from ping3 import ping
 
-SEPARATOR = "<SEPARATOR>"
-BUFFER_SIZE = 4096
 
 print ("starting...")
 
