@@ -44,9 +44,11 @@ def broadcastListen(stop):
                 requestFiles.append(msg)
 
 def fileTransferSend():
-    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
-    for file in requestFiles:
+    s = socket(AF_INET, SOCK_STREAM)
+    for file in files:
+        print("sending: " + file)
         filesize = os.path.getsize(file)
+        print("filesize: " + filesize)
         s.connect("", 1234)
         s.send(f"{file}{SEPARATOR}{filesize}".encode("utf-8"))
         with open(file, "rb") as f:
@@ -61,23 +63,26 @@ def fileTransferSend():
                 s.sendall(bytes_read)
 
 def fileTransferRecieve():
-    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+    s = socket(AF_INET, SOCK_STREAM)
+    s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind(("", 1234))
-    s.listen(5)
+    s.listen()
     clientSocket, clientIP = s.accept()
     received = clientSocket.recv(BUFFER_SIZE).decode()
     filename, filesize = received.split(SEPARATOR)
     filesize = int(filesize)
-    with open(filename, "wb") as f:
-        while True:
-            # read 1024 bytes from the socket (receive)
-            bytes_read = clientSocket.recv(BUFFER_SIZE)
-            if not bytes_read:    
-                # nothing is received
-                # file transmitting is done
-                break
-            # write to the file the bytes we just received
-            f.write(bytes_read)
+    if filename not in files:
+        with open(filename, "wb") as f:
+            while True:
+                # read 1024 bytes from the socket (receive)
+                bytes_read = clientSocket.recv(BUFFER_SIZE)
+                if not bytes_read:    
+                    # nothing is received
+                    # file transmitting is done
+                    break
+                # write to the file the bytes we just received
+                f.write(bytes_read)
+        requestFiles.remove(filename)
 
         
 
@@ -89,9 +94,14 @@ time.sleep(1)
 Thread(target = broadcastRequest).start()
 time.sleep(1)
 Thread(target = broadcastListen, args = (lambda: stop,)).start()
-
 stop = True
+time.sleep(1)
+Thread(target = fileTransferSend).start()
+time.sleep(1)
+Thread(target = fileTransferRecieve).start()
+
 print("exiting...")
+sys.exit()
 
 '''
 if os.path.isfile("serverlist.txt"):
