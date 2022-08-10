@@ -7,6 +7,7 @@ from ping3 import ping
 
 
 print ("starting...")
+print(gethostbyname(gethostname()))
 
 files = os.listdir("/files")
 requestFiles = []
@@ -18,7 +19,7 @@ BUFFER_SIZE = 4096
 def broadcastRequest():
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-    s.sendto(b"List all files.", ("255.255.255.255", 1234))
+    s.sendto(b"", ("255.255.255.255", 1234))
 
 def broadcastListen(stop):
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
@@ -35,6 +36,7 @@ def broadcastListen(stop):
             break
 
         msg = msg.decode("utf-8")
+'''
         if msg == "List all files.":
             print("Sending list of files")
             for file in files:
@@ -42,37 +44,39 @@ def broadcastListen(stop):
         else:
             if msg not in files:
                 requestFiles.append(msg)
+'''
 
-def fileTransferSend():
-    s = socket(AF_INET, SOCK_STREAM)
-    for file in files:
-        print("sending: " + file)
-        filesize = os.path.getsize(file)
-        print("filesize: " + filesize)
-        s.connect("", 1234)
-        s.send(f"{file}{SEPARATOR}{filesize}".encode("utf-8"))
-        with open(file, "rb") as f:
-            while True:
-                # read the bytes from the file
-                bytes_read = f.read(BUFFER_SIZE)
-                if not bytes_read:
-                    # file transmitting is done
-                    break
-                # we use sendall to assure transimission in 
-                # busy networks
-                s.sendall(bytes_read)
+def sendFile():
+    for node in listIP:
+        s = socket(AF_INET, SOCK_STREAM)
+        print("Connecting to " + node)
+        s.connect((node, 1234))
+        for file in files:
+            print("Sending " + file)
+            filesize = os.path.getsize("/files/" + file)
+            s.send(f"{file}{SEPARATOR}{filesize}".encode("utf-8"))
+            with open("/files/" + file, "rb") as f:
+                while True:
+                    # read the bytes from the file
+                    bytes_read = f.read(BUFFER_SIZE)
+                    if not bytes_read:
+                        # file transmitting is done
+                        break
+                    # we use sendall to assure transimission in 
+                    # busy networks
+                    s.sendall(bytes_read)
 
-def fileTransferRecieve():
+def recieveFile():
     s = socket(AF_INET, SOCK_STREAM)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind(("", 1234))
-    s.listen()
+    s.listen(5)
     clientSocket, clientIP = s.accept()
     received = clientSocket.recv(BUFFER_SIZE).decode()
     filename, filesize = received.split(SEPARATOR)
     filesize = int(filesize)
     if filename not in files:
-        with open(filename, "wb") as f:
+        with open("/files/" + filename, "wb") as f:
             while True:
                 # read 1024 bytes from the socket (receive)
                 bytes_read = clientSocket.recv(BUFFER_SIZE)
@@ -82,7 +86,7 @@ def fileTransferRecieve():
                     break
                 # write to the file the bytes we just received
                 f.write(bytes_read)
-        requestFiles.remove(filename)
+        #requestFiles.remove(filename)
 
         
 
@@ -92,16 +96,14 @@ time.sleep(1)
 Thread(target = broadcastListen, args = (lambda: stop,)).start()
 time.sleep(1)
 Thread(target = broadcastRequest).start()
-time.sleep(1)
-Thread(target = broadcastListen, args = (lambda: stop,)).start()
+#time.sleep(1)
+#Thread(target = broadcastListen, args = (lambda: stop,)).start()
 stop = True
 time.sleep(1)
-Thread(target = fileTransferSend).start()
-time.sleep(1)
-Thread(target = fileTransferRecieve).start()
+Thread(target = recieveFile).start()
+Thread(target = sendFile).start()
 
-print("exiting...")
-sys.exit()
+
 
 '''
 if os.path.isfile("serverlist.txt"):
