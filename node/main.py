@@ -15,9 +15,10 @@ s.bind(("", 1234))
 s.sendto(msg, ("255.255.255.255", 1234))
 s.listen()
 '''
-files = str(os.listdir("/files"))
+files = os.listdir("/files")
 requestFiles = []
 listIP = []
+#listIP.append(gethostbyname(gethostname()))
 
 def broadcastRequest():
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
@@ -26,10 +27,11 @@ def broadcastRequest():
 
 def broadcastListen(stop):
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+    s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind(("", 1234))
     while True:
         msg, senderIP = s.recvfrom(1234)
-        newIP = senderIP
+        newIP = str(senderIP[0])
 
         if newIP not in listIP and newIP != gethostbyname(gethostname()):
             listIP.append(newIP)
@@ -37,15 +39,22 @@ def broadcastListen(stop):
         if stop():
             break
 
-        msg.decode("utf-8")
-        if msg == b'List all files.':
+        msg = msg.decode("utf-8")
+        if msg == "List all files.":
             print("Sending list of files")
             for file in files:
-                transfer = "".join(file) # convert tuple to string
-                s.sendto(transfer.encode("utf-8"), (senderIP, 1234))
+                s.sendto(file.encode("utf-8"), (newIP, 1234))
         else:
             if msg not in files:
                 requestFiles.append(msg)
+
+def fileTransfer():
+    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+    for file in requestFiles:
+        filesize = os.path.getsize(file)
+        s.connect("", 1234)
+        s.send(f"{file}{SEPARATOR}{filesize}".encode("utf-8"))
+        
 
 stop = False
 
@@ -53,8 +62,11 @@ time.sleep(1)
 Thread(target = broadcastListen, args = (lambda: stop,)).start()
 time.sleep(1)
 Thread(target = broadcastRequest).start()
+time.sleep(1)
+Thread(target = broadcastListen, args = (lambda: stop,)).start()
 
 stop = True
+print("exiting...")
 
 '''
 if os.path.isfile("serverlist.txt"):
