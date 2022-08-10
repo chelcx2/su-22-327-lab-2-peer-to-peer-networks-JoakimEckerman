@@ -8,16 +8,11 @@ from ping3 import ping
 
 print ("starting...")
 
-'''
-s = socket(AF_INET, SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-s.bind(("", 1234))
-s.sendto(msg, ("255.255.255.255", 1234))
-s.listen()
-'''
 files = os.listdir("/files")
 requestFiles = []
 listIP = []
+SEPARATOR = "<SEPARATOR>"
+BUFFER_SIZE = 4096
 #listIP.append(gethostbyname(gethostname()))
 
 def broadcastRequest():
@@ -48,12 +43,42 @@ def broadcastListen(stop):
             if msg not in files:
                 requestFiles.append(msg)
 
-def fileTransfer():
+def fileTransferSend():
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
     for file in requestFiles:
         filesize = os.path.getsize(file)
         s.connect("", 1234)
         s.send(f"{file}{SEPARATOR}{filesize}".encode("utf-8"))
+        with open(file, "rb") as f:
+            while True:
+                # read the bytes from the file
+                bytes_read = f.read(BUFFER_SIZE)
+                if not bytes_read:
+                    # file transmitting is done
+                    break
+                # we use sendall to assure transimission in 
+                # busy networks
+                s.sendall(bytes_read)
+
+def fileTransferRecieve():
+    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+    s.bind(("", 1234))
+    s.listen(5)
+    clientSocket, clientIP = s.accept()
+    received = clientSocket.recv(BUFFER_SIZE).decode()
+    filename, filesize = received.split(SEPARATOR)
+    filesize = int(filesize)
+    with open(filename, "wb") as f:
+        while True:
+            # read 1024 bytes from the socket (receive)
+            bytes_read = clientSocket.recv(BUFFER_SIZE)
+            if not bytes_read:    
+                # nothing is received
+                # file transmitting is done
+                break
+            # write to the file the bytes we just received
+            f.write(bytes_read)
+
         
 
 stop = False
