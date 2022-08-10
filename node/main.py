@@ -1,59 +1,71 @@
 
-import sys, os
+import sys, os, traceback, time
+from threading import Thread
 from socket import *
+from tracemalloc import stop
 from ping3 import ping
 
 
 print ("starting...")
 
+'''
 s = socket(AF_INET, SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(("", 1234))
+s.sendto(msg, ("255.255.255.255", 1234))
 s.listen()
-try:
-    #resolving ip address
-    hostIP = gethostbyname(gethostname())
-    print("Host ip: {}".format(hostIP))
-except gaierror:
-    # this means could not resolve the host
-    print ("there was an error resolving the host")
-    sys.exit()
-
+'''
+files = str(os.listdir("/files"))
+requestFiles = []
 listIP = []
-for num in range(2,6):
-    ip = "172.30.0."+str(num)
 
-    if ping(ip):
-        if not ip in listIP:
-            listIP.append(ip)
+def broadcastRequest():
+    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+    s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+    s.sendto(b"List all files.", ("255.255.255.255", 1234))
 
-#print(*listIP, sep = "\n")
-#print ("Looking for open ports...")
+def broadcastListen(stop):
+    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+    s.bind(("", 1234))
+    while True:
+        msg, senderIP = s.recvfrom(1234)
+        newIP = senderIP
 
-try:
-    found = False
-    for ip in listIP:
-        # will scan all ports
-        print("looking for open ports in {}".format(ip))
-        for port in range(1,65535):
-            s = socket(AF_INET, SOCK_STREAM)
-            #setdefaulttimeout(1)
+        if newIP not in listIP and newIP != gethostbyname(gethostname()):
+            listIP.append(newIP)
 
-            result = s.connect_ex((ip,port))
-            if result == 0:
-                print("Port {} is open".format(port))
-                found = True
-            s.close()
-    if not found:
-        print("no open ports found")
+        if stop():
+            break
 
-except KeyboardInterrupt:
-    print("\n Exiting Program !!!!")
-    sys.exit()
-except gaierror:
-    print("\n Hostname Could Not Be Resolved !!!!")
-    sys.exit()
-except error:
-    print("\ Server not responding !!!!")
-    sys.exit()
+        msg.decode("utf-8")
+        if msg == b'List all files.':
+            print("Sending list of files")
+            for file in files:
+                transfer = "".join(file) # convert tuple to string
+                s.sendto(transfer.encode("utf-8"), (senderIP, 1234))
+        else:
+            if msg not in files:
+                requestFiles.append(msg)
 
-print ("exiting...")
+stop = False
+
+time.sleep(1)
+Thread(target = broadcastListen, args = (lambda: stop,)).start()
+time.sleep(1)
+Thread(target = broadcastRequest).start()
+
+stop = True
+
+'''
+if os.path.isfile("serverlist.txt"):
+    os.remove("serverlist.txt")
+
+ad = ''.join(str(address));
+ad1 = ad.split()
+ad2= ad1[0]
+ad3=ad2[2:15]
+print ad3
+f = open('serverlist.txt', 'a')
+f.write(ad3+'\n')
+f.close()
+'''
