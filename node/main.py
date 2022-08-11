@@ -20,8 +20,9 @@ def broadcastRequest():
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
     s.sendto(b"", ("255.255.255.255", 1234))
+    s.close()
 
-def broadcastListen(stop):
+def broadcastListen():
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind(("", 1234))
@@ -32,10 +33,11 @@ def broadcastListen(stop):
         if newIP not in listIP and newIP != gethostbyname(gethostname()):
             listIP.append(newIP)
 
-        if stop():
-            break
+        #if stop():
+        #    break
 
         msg = msg.decode("utf-8")
+    s.close()
 '''
         if msg == "List all files.":
             print("Sending list of files")
@@ -65,12 +67,14 @@ def sendFile():
                     # we use sendall to assure transimission in 
                     # busy networks
                     s.sendall(bytes_read)
+                    #time.sleep(1)
+    s.close()
 
 def recieveFile():
     s = socket(AF_INET, SOCK_STREAM)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind(("", 1234))
-    s.listen(5)
+    s.listen()
     clientSocket, clientIP = s.accept()
     received = clientSocket.recv(BUFFER_SIZE).decode()
     filename, filesize = received.split(SEPARATOR)
@@ -87,18 +91,20 @@ def recieveFile():
                 # write to the file the bytes we just received
                 f.write(bytes_read)
         #requestFiles.remove(filename)
+    time.sleep(1)
+    s.close()
 
         
 
-stop = False
+#stop = False
 
 time.sleep(1)
-Thread(target = broadcastListen, args = (lambda: stop,)).start()
+Thread(target = broadcastListen).start()
 time.sleep(1)
 Thread(target = broadcastRequest).start()
 #time.sleep(1)
 #Thread(target = broadcastListen, args = (lambda: stop,)).start()
-stop = True
+#stop = True
 time.sleep(1)
 Thread(target = recieveFile).start()
 Thread(target = sendFile).start()
