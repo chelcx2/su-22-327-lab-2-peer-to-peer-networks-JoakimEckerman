@@ -9,23 +9,30 @@ from ping3 import ping
 
 print ("starting...")
 
+# returns a list of files we have
 files = os.listdir("/files")
+# names of the files the node doesnt have
 requestFiles = []
+# all the ips of the other nodes 
 listIP = []
 SEPARATOR = "<SEPARATOR>"
 BUFFER_SIZE = 4096
 #listIP.append(gethostbyname(gethostname()))
 
+#send a msg to all of the other nodes
 def broadcastRequest():
+    #creating a socket using IPv4, UDP socket
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
     s.sendto(b"List all files.", ("255.255.255.255", 1234))
 
+#listening for a msg from the other nodes
 def broadcastListen(stop):
     s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind(("", 1234))
     while True:
+        #receiving the msg we get from broadcast 
         msg, senderIP = s.recvfrom(1234)
         newIP = str(senderIP[0])
 
@@ -45,10 +52,13 @@ def broadcastListen(stop):
                 requestFiles.append(msg)
 
 def fileTransferSend():
+    #making our server
     def server():
+    #creating our server socket
     serversock = socket.socket()
     host = socket.gethostname();
     port = 9000;
+    #bind the ip and port to serversock
     serversock.bind((host,port));
     filename = ""
     serversock.listen(10);
