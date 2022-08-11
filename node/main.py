@@ -1,4 +1,3 @@
-
 import sys, os, traceback, time
 from threading import Thread
 from socket import *
@@ -77,6 +76,7 @@ def sendFile(filename, node):
     s.close()
 
 def requestFile(filename):
+    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
     s = socket(AF_INET, SOCK_STREAM)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
@@ -121,19 +121,3 @@ stop = True
 
 #Thread(target = recieveFile).start()
 #Thread(target = sendFile).start()
-
-
-
-'''
-if os.path.isfile("serverlist.txt"):
-    os.remove("serverlist.txt")
-
-ad = ''.join(str(address));
-ad1 = ad.split()
-ad2= ad1[0]
-ad3=ad2[2:15]
-print ad3
-f = open('serverlist.txt', 'a')
-f.write(ad3+'\n')
-f.close()
-'''
