@@ -34,21 +34,24 @@ def broadcastListen(stop):
 
         if stop():
             break
-
+        
         msg = msg.decode("utf-8")
+        #print("TESTING")
+        #print(msg)
+        #print(newIP + ", " + gethostbyname(gethostname()))
         if msg == "List all files.":
-            print("Sending list of files")
+            #print("Sending list of files")
             for file in files:
                 s.sendto(file.encode("utf-8"), (newIP, 1234))
+        elif msg not in files:
+            requestFiles.append(msg)
+            #print("Requesting " + msg)
+            t1 = Thread(target = requestFile, args = (msg, ))
         elif msg in files and newIP != gethostbyname(gethostname()):
             print("I have the file!")
             t1 = Thread(target = sendFile, args = (msg, newIP, ))
             t1.start()
-            t1.join()  
-        elif msg not in files:
-            requestFiles.append(msg)
-            print("Requesting " + msg)
-            t1 = Thread(target = requestFile, args = (msg, ))
+            t1.join()
 
                     
     s.close()
@@ -76,7 +79,6 @@ def sendFile(filename, node):
     s.close()
 
 def requestFile(filename):
-    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
     s = socket(AF_INET, SOCK_STREAM)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
@@ -115,9 +117,10 @@ time.sleep(1)
 Thread(target = broadcastRequest).start()
 time.sleep(1)
 Thread(target = broadcastListen, args = (lambda: stop,)).start()
-print(listIP)
+#print(listIP)
 
 stop = True
+print("Exiting...")
 
 #Thread(target = recieveFile).start()
 #Thread(target = sendFile).start()
