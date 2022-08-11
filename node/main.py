@@ -77,7 +77,7 @@ def sendFile(filename, node):
     s.close()
 
 def requestFile(filename):
-    s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+    s = socket(AF_INET, SOCK_STREAM)
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind(("", 1234))
